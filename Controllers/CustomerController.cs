@@ -1,5 +1,4 @@
 ﻿using CustomersApi.Models;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
 using CustomersApi.Repositories;
 
