@@ -1,5 +1,7 @@
 ﻿using CustomersApi.Models;
+using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
+using CustomersApi.Repositories;
 
 namespace CustomersApi.Controllers
 {
@@ -7,17 +9,23 @@ namespace CustomersApi.Controllers
     [Route("api/v1/[controller]")]
     public class CustomerController : Controller
     {
+        private readonly CustomerDbContext dbContext;
+        public CustomerController(CustomerDbContext _dbContext)
+        {
+            dbContext = _dbContext;
+        }
 
         [HttpGet]
-        public async Task<CustomerDto> GetCustomers()
+        public async Task<List<CustomerDto>> GetCustomers()
         {
             throw new NotImplementedException();
         }
 
         [HttpGet("{id}")]
-        public async Task<CustomerDto> GetCustomerById(long _id)
+        public async Task<IActionResult> GetCustomerById(long _id)
         {
-            throw new NotImplementedException();
+
+            return new OkObjectResult(0);
         }
 
         [HttpDelete("{id}")]
@@ -27,9 +35,11 @@ namespace CustomersApi.Controllers
         }
 
         [HttpPost]
-        public async Task<CustomerDto> CreateCustomer(CreateCustomerDto customer)
+        public async Task<IActionResult> CreateCustomer(CreateCustomerDto customerDto)
         {
-            throw new NotImplementedException();
+            CustomerEntity customer = await dbContext.Add(customerDto);
+            
+            return new CreatedResult($"IDK", customer);
         }
 
         [HttpPut]
