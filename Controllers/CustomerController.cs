@@ -5,30 +5,32 @@ using CustomersApi.Repositories;
 namespace CustomersApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/customers")]
     public class CustomerController : Controller
     {
         private readonly CustomerDbContext dbContext;
+
         public CustomerController(CustomerDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
 
         [HttpGet]
-        public async Task<List<CustomerDto>> GetCustomers()
+        public async Task<IActionResult> GetCustomers()
         {
-            throw new NotImplementedException();
+            List<CustomerEntity> customers = await dbContext.Get();
+            return new OkObjectResult(customers);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCustomerById(long _id)
+        public async Task<IActionResult> GetCustomerById(long id)
         {
-
-            return new OkObjectResult(0);
+            CustomerEntity customer = await dbContext.Get(id);
+            return new OkObjectResult(customer);
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteCustomer(long _id)
+        public async Task<bool> DeleteCustomer(long id)
         {
             throw new NotImplementedException();
         }
@@ -37,7 +39,7 @@ namespace CustomersApi.Controllers
         public async Task<IActionResult> CreateCustomer(CreateCustomerDto customerDto)
         {
             CustomerEntity customer = await dbContext.Add(customerDto);
-            
+
             return new CreatedResult($"IDK", customer);
         }
 
@@ -46,6 +48,5 @@ namespace CustomersApi.Controllers
         {
             throw new NotImplementedException();
         }
-
     }
 }

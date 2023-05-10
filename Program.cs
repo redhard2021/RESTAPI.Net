@@ -7,13 +7,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddRouting(resp => resp.LowercaseUrls = true);
+builder.Services.AddCors();
 builder.Services.AddDbContext<CustomerDbContext>(resp =>
     {
-        resp.UseMySQL("Server=sql10.freemysqlhosting.net;Database=sql10617111;Uid=sql10617111;Pwd=BmlJ7leIvm");
+        resp.UseMySQL("Server=sql10.freemysqlhosting.net;Port=3306;Database=sql10617111;Uid=sql10617111;Pwd=BmlJ7leIvm;");
     }
 );
 
 var app = builder.Build();
+
+app.UseCors(op =>
+{
+    op.AllowAnyOrigin();
+    op.AllowAnyMethod();
+    op.AllowAnyHeader();
+});
 
 if (app.Environment.IsDevelopment())
 {
