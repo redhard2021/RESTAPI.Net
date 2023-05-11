@@ -1,11 +1,12 @@
-﻿using CustomersApi.Models;
+﻿using CustomersApi.Data;
+using CustomersApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using CustomersApi.Repositories;
 
 namespace CustomersApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/customers")]
+    [Route("api/[controller]")]
     public class CustomerController : Controller
     {
         private readonly CustomerDbContext dbContext;
@@ -26,11 +27,30 @@ namespace CustomersApi.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCustomerById(long id)
         {
-            CustomerEntity customer = await dbContext.Get(id);
+            if (id == 0) return BadRequest();
+            CustomerEntity customer = new CustomerEntity();
+            try
+            {
+                customer = await dbContext.Get(id);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest();
+            }
             return new OkObjectResult(customer);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CustomerDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateCustomer(CreateCustomerDto customerDto)
+        {
+            CustomerEntity customer = await dbContext.Add(customerDto);
+            return new CreatedResult($"https://localhost:7051/api/v1/customers/{customer.Id}", customer);
         }
 
         [HttpDelete("{id}")]
@@ -40,16 +60,6 @@ namespace CustomersApi.Controllers
         {
             CustomerEntity result = await dbContext.Delete(id);
             return new OkObjectResult(result.Name + " has been deleted");
-        }
-
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CustomerDto))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CreateCustomer(CreateCustomerDto customerDto)
-        {
-            CustomerEntity customer = await dbContext.Add(customerDto);
-            return new CreatedResult($"https://localhost:7051/api/v1/customers/{customer.Id}", null);
         }
 
         [HttpPut]

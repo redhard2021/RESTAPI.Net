@@ -1,8 +1,9 @@
 ﻿using CustomersApi.Models;
+using CustomersApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace CustomersApi.Repositories
+namespace CustomersApi.Data
 {
     public class CustomerDbContext : DbContext
     {
